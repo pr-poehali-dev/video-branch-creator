@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 
@@ -40,8 +40,7 @@ export default function VideoTreeBuilder() {
       level: 0,
     },
   });
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   const calculateTreeLayout = (nodeId: string, nodesMap: Record<string, VideoNode>, startX: number, level: number): number => {
@@ -241,39 +240,33 @@ export default function VideoTreeBuilder() {
                 </div>
               </div>
             ) : (
-              <div
+              <label
+                htmlFor={`file-input-${node.id}`}
                 className="w-36 h-36 rounded-full border-4 flex flex-col items-center justify-center cursor-pointer hover:scale-110 transition-all duration-300 shadow-2xl"
                 style={{ 
                   backgroundColor: `${node.color}15`,
                   borderColor: node.color,
                   boxShadow: `0 0 40px ${node.color}40`
                 }}
-                onClick={() => {
-                  setActiveNodeId(node.id);
-                  fileInputRef.current?.click();
-                }}
               >
                 <Icon name="Plus" size={36} style={{ color: node.color }} />
                 <span className="text-xs mt-2 font-semibold" style={{ color: node.color }}>
                   Видео
                 </span>
-              </div>
+                <input
+                  id={`file-input-${node.id}`}
+                  type="file"
+                  accept="video/*"
+                  className="hidden"
+                  onChange={(e) => handleFileSelect(node.id, e)}
+                />
+              </label>
             )}
           </div>
         ))}
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="video/*"
-        className="hidden"
-        onChange={(e) => {
-          if (activeNodeId) {
-            handleFileSelect(activeNodeId, e);
-          }
-        }}
-      />
+
 
       <div className="fixed bottom-6 right-6 flex gap-3 z-20">
         <Button
